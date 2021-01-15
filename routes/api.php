@@ -31,7 +31,7 @@ Route::post('insert-users',[UserController::class,'insertUsers']);
 
 
 Route::prefix('messages')->group(function(){
-    Route::get('/{id}',[MesageControler::class,'mesageGet']);
+    Route::get('/{id}/{team_id}',[MesageControler::class,'mesageGet']);
     Route::post('add',[MesageControler::class,'store']); 
     Route::delete('delete/{id}',[MesageControler::class,'delete']);
 });
@@ -39,11 +39,14 @@ Route::prefix('messages')->group(function(){
 Route::post('login',[UserController::class,'loginPost']);
 Route::post('register',[UserController::class,'registerPost']);
 
+//add number return hash number
 Route::get('get-hash' , function (Request $req){
     return response()->json(['hash' => Hash::make($req->password)]);
 });
 
-Route::get('search',[UserController::class,'search']);
+Route::get('/{id}/search',[UserController::class,'search']);
 
 
 Route::get('getLast',[UserController::class,'userLast']);
+
+Route::get('authUser',[UserController::class,'authUser']);

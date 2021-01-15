@@ -75,10 +75,11 @@ class UserController extends Controller
         return ['success' => false, 'message' => 'Error'];
     }
     //Search
-    public function search(Request $req)
+    public function search(Request $req , $id)
     {
-
-        $users_from_api = Http::get('https://www.webwork-tracker.com/chat-api/users?user_id=66289');
+      
+        $users_from_api = Http::get('https://www.webwork-tracker.com/chat-api/users?user_id='. $id);
+      
         $search_resault = [];
         $word_search =  $req->search;
         $regexp = '/.*' . $word_search . '.*/isu';
@@ -91,16 +92,10 @@ class UserController extends Controller
         return $search_resault;
     }
 
-    public function upDateLastname(Request $req)
+
+    public function userLast(Request $req )
     {
-        return $req->all();
-    }
-
-
-
-    public function userLast(Request $req)
-    {
-        $user = Http::get('https://www.webwork-tracker.com/chat-api/users?user_id=66289');
+        $user = Http::get('https://www.webwork-tracker.com/chat-api/users?user_id=' . $req->user_id);// . mianum
         $users = $user['users'];
 
         if ($req->user_id) {
@@ -126,11 +121,27 @@ class UserController extends Controller
 
             foreach ($last_messages as $v) {
                 if (isset($last_messages_group[$v['creator_id']])) continue;
-                $last_messages_group[$v['creator_id']] = $v['message'];
+                $last_messages_group[$v['creator_id']] =  $v['message'] . $v['created_at']->diffForHumans();
+                // shortRelativeDiffForHumans()  => 1d ago , 2h ago
+                
+                
             }
             return $last_messages_group;
         }
         // return ['messages' => $last_messages_group ];
+    }
+    public function authUser(Request $req){ 
+        $user = Http::get('https://www.webwork-tracker.com/chat-api/users?user_id=66289');
+        $userId = $req->user_id;
+        $users = $user['users'];
+        
+        foreach($users as $item){
+            if($userId==$item['id'])
+            return $item;
+        }
+        
+        
+             
     }
 }
 
